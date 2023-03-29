@@ -1,0 +1,9 @@
+{
+    "name": "rainlab/livewire-plugin",
+    "type": "october-plugin",
+    "description": "Load and render Livewire components using Twig inside October CMS themes.",
+    "require": {
+        "livewire/livewire": "^2.12",
+        "composer/installers": "~1.0"
+    }
+}
