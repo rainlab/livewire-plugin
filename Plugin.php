@@ -3,6 +3,7 @@
 use App;
 use View;
 use Config;
+use RainLab\Livewire\Helpers\LivewireHelper;
 use RainLab\Livewire\Twig\LivewireTokenParser;
 use System\Classes\PluginBase;
 use Livewire\Livewire;
@@ -50,7 +51,7 @@ class Plugin extends PluginBase
         return [
             'functions' => [
                 'livewireStyles' => [Livewire::class, 'styles'],
-                'livewireScripts' => [Livewire::class, 'scripts'],
+                'livewireScripts' => [LivewireHelper::class, 'renderScripts'],
             ],
             'tokens' => [
                 new LivewireTokenParser
