@@ -40,7 +40,7 @@ class Plugin extends PluginBase
 
         Config::set('livewire.manifest_path', App::cachePath('framework/livewire-components.php'));
 
-        Config::set('livewire.class_namespace', 'App\Livewire');
+        Config::set('livewire.class_namespace', \App\Livewire::class);
     }
 
     /**

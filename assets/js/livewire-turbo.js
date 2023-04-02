@@ -1,20 +1,19 @@
 if (typeof window.Livewire === 'undefined') {
-    throw 'Livewire Turbolinks Plugin: window.Livewire is undefined. Make sure @livewireScripts is placed above this script include'
+    throw 'Livewire Turbolinks Plugin: window.Livewire is undefined. Make sure @livewireScripts is placed above this script include';
 }
 
-var firstTime = true
+var firstTime = true;
 
-function wireTurboAfterFirstVisit () {
+function wireTurboAfterFirstVisit() {
     // We only want this handler to run AFTER the first load.
-    if  (firstTime) {
-        firstTime = false
-
-        return
+    if (firstTime) {
+        firstTime = false;
+        return;
     }
 
-    window.Livewire.restart()
+    window.Livewire.restart();
 
-    window.Alpine && window.Alpine.flushAndStopDeferringMutations && window.Alpine.flushAndStopDeferringMutations()
+    window.Alpine && window.Alpine.flushAndStopDeferringMutations && window.Alpine.flushAndStopDeferringMutations();
 }
 
 function wireTurboBeforeCache() {
@@ -31,17 +30,17 @@ function wireTurboBeforeCache() {
     window.Alpine && window.Alpine.deferMutations && window.Alpine.deferMutations()
 }
 
-document.addEventListener("page:load", wireTurboAfterFirstVisit)
-document.addEventListener("page:before-cache", wireTurboBeforeCache);
+document.addEventListener('page:load', wireTurboAfterFirstVisit);
+document.addEventListener('page:before-cache', wireTurboBeforeCache);
 
 Livewire.hook('beforePushState', (state) => {
     if (!state.turbolinks) {
-        state.turbolinks = {}
+        state.turbolinks = {};
     }
-})
+});
 
 Livewire.hook('beforeReplaceState', (state) => {
     if (!state.turbolinks) {
-        state.turbolinks = {}
+        state.turbolinks = {};
     }
 });

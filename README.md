@@ -37,7 +37,7 @@ Next, simply include a Livewire component using the `{% livewire %}` Twig tag in
 Pass variables to the component using an equal sign (`=`).
 
 ```twig
-{% livewire 'counter' start=3 %}
+{% livewire 'counter' count=3 %}
 ```
 
 ## Usage Example
