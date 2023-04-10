@@ -13,7 +13,7 @@ composer require rainlab/livewire-plugin
 
 ## Rendering Livewire Components
 
-Use the `livewireStyles` and `livewireScripts` Twig functions to activate Livewire in your CMS theme layout. For example:
+Use the `livewireStyles` and `livewireScripts` Twig functions to activate Livewire in your CMS theme layout. For example, your layout may look like this:
 
 ```twig
 <html>
@@ -28,7 +28,7 @@ Use the `livewireStyles` and `livewireScripts` Twig functions to activate Livewi
 </html>
 ```
 
-Next, simply include a Livewire component using the `{% livewire %}` Twig tag inside your page or partials.
+Next, include a Livewire component using the `{% livewire %}` Twig tag inside your page or partials.
 
 ```twig
 {% livewire 'counter' %}
@@ -42,7 +42,7 @@ Pass variables to the component using an equal sign (`=`).
 
 ## Usage Example
 
-In the **app/views/livewire** directory, create **counter.htm** as a view file.
+Create a file called **app/views/livewire/counter.htm** with the following content.
 
 ```twig
 <div class="input-group py-3 w-25">
@@ -58,10 +58,10 @@ In the **app/views/livewire** directory, create **counter.htm** as a view file.
 </div>
 ```
 
-In the **app/livewire** directory, create **Counter.php** as a `App\Livewire\Counter` Livewire component class.
+Create a file called **app/Livewire/Counter.php** with the following contents.
 
 ```php
-namespace App\Livewire;
+<?php namespace App\Livewire;
 
 use Livewire\Component;
 
@@ -85,6 +85,20 @@ This component now be rendered as **counter** in your CMS templates. The compone
 
 ```twig
 {% livewire 'counter' %}
+```
+
+For example, in the demo theme, create a template called **test.htm** with the following content. Then open the `/test` URL.
+
+```twig
+url = "/test"
+layout = "default"
+==
+{% put scripts %}{{ livewireScripts() }}{% endput %}
+{% put styles %}{{ livewireStyles() }}{% endput %}
+
+<div class="container">
+    {% livewire 'counter' %}
+</div>
 ```
 
 ### See Also
