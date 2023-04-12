@@ -38,6 +38,8 @@ class Plugin extends PluginBase
         // Ensure path is registered
         View::addLocation(app_path('views'));
 
+        Config::set('livewire.view_path', app_path('views/livewire'));
+
         Config::set('livewire.manifest_path', App::cachePath('framework/livewire-components.php'));
 
         Config::set('livewire.class_namespace', \App\Livewire::class);
