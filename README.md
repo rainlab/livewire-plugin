@@ -3,7 +3,11 @@
 
 Integrate Laravel Livewire components inside October CMS themes.
 
-## Installation Instructions
+## Requirements
+
+- October CMS 3.0 or above
+
+### Installation
 
 To install with Composer, run this from your project root.
 
@@ -39,6 +43,18 @@ Pass variables to the component using an equal sign (`=`).
 ```twig
 {% livewire 'counter' count=3 %}
 ```
+
+## File Locations
+
+Classes are stored in the **app/Livewire** directory.
+
+Views are stored in the in **app/views/livewire** directory by default. The following template syntaxes are supported in the views directory, determined by their file extension.
+
+Extension | Template Engine
+--------- | --------------
+**.htm** | October Twig
+**.blade.php** | Laravel Blade
+**.php** | PHP Template
 
 ## Usage Example
 
