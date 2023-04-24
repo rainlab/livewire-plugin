@@ -1,11 +1,11 @@
 
 # Livewire Plugin
 
-Integrate Laravel Livewire components inside October CMS themes. You can use them in your app and plugins, with Twig, Blade or PHP template engines.
+Integrate Laravel Livewire components inside October CMS themes, app and plugins, with templates provided by Twig, Blade or PHP.
 
 ## Requirements
 
-- October CMS 3.3.9 or above
+- October CMS v3.3.9 or above
 
 ### Installation
 
@@ -42,7 +42,7 @@ You may pass variables to the component using an equal sign (`=`).
 {% livewire 'counter' count=3 %}
 ```
 
-> **Note**: For proper operation, your CMS layout should always include the `{% styles %}` and `{% scripts %}` placeholder tags, as described in the [placeholder documentation](https://docs.octobercms.com/3.x/markup/tag/placeholder.html#scripts).
+> **Note**: For proper operation, your CMS layout should include the `{% styles %}` and `{% scripts %}` placeholder tags, as described in the [placeholder documentation](https://docs.octobercms.com/3.x/markup/tag/placeholder.html#scripts).
 
 ## File Locations
 
@@ -88,7 +88,7 @@ class Todo extends \Livewire\Component
 }
 ```
 
-In the above example, the component can be rendered using the alias `demoTodo`.
+The component can be rendered anywhere using the `demoTodo` alias.
 
 ```twig
 {% livewire 'demoTodo' %}
@@ -124,7 +124,7 @@ $this->renderLivewire('counter');
 You may implement Livewire in your [backend controllers](https://docs.octobercms.com/3.x/extend/system/controllers.html) using the `RainLab\Livewire\Behaviors\LivewireController` behavior. This implementation will ensure that the necessary dependencies are registered with the controller.
 
 ```php
-class MyComponent extends \Backend\Classes\Controller
+class MyController extends \Backend\Classes\Controller
 {
     public $implement = [
         \RainLab\Livewire\Behaviors\LivewireController::class

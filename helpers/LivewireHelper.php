@@ -38,7 +38,14 @@ class LivewireHelper
             $options['asset_url'] = Url::asset('');
         }
 
-        return Livewire::scripts($options) .
-            '<script src="' . $turboScript . '" data-turbo-eval="false"></script>';
+        $scriptStr = Livewire::scripts($options);
+
+        $scriptStr = str_replace('data-turbolinks-eval="false"', '', $scriptStr);
+
+        $scriptStr .= "<script> addEventListener('page:loaded', function() { if (window.oc && oc.useTurbo && oc.useTurbo() && !window.Livewire) window.location.reload(); }, { once: true }); </script>";
+
+        $scriptStr .= '<script src="' . $turboScript . '" data-turbo-eval="false"></script>';
+
+        return $scriptStr;
     }
 }

@@ -56,6 +56,11 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        // Package missing
+        if (!class_exists(Livewire::class)) {
+            return;
+        }
+
         $this->registerLivewireFromPlugins();
     }
 

@@ -27,7 +27,7 @@ function wireTurboBeforeCache() {
         el.setAttribute('wire:initial-data', JSON.stringify(dataObject));
     });
 
-    window.Alpine && window.Alpine.deferMutations && window.Alpine.deferMutations()
+    window.Alpine && window.Alpine.deferMutations && window.Alpine.deferMutations();
 }
 
 document.addEventListener('page:load', wireTurboAfterFirstVisit);
