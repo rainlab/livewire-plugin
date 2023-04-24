@@ -1,8 +1,8 @@
 <?php namespace RainLab\Livewire;
 
-use App;
 use View;
 use Config;
+use System\Classes\PluginManager;
 use RainLab\Livewire\Helpers\LivewireHelper;
 use RainLab\Livewire\Twig\LivewireTokenParser;
 use System\Classes\PluginBase;
@@ -35,14 +35,38 @@ class Plugin extends PluginBase
      */
     public function register()
     {
+        // Package missing
+        if (!class_exists(Livewire::class)) {
+            return;
+        }
+
         // Ensure path is registered
         View::addLocation(app_path('views'));
 
         Config::set('livewire.view_path', app_path('views/livewire'));
 
-        Config::set('livewire.manifest_path', App::cachePath('framework/livewire-components.php'));
+        Config::set('livewire.manifest_path', cache_path('framework/livewire-components.php'));
 
         Config::set('livewire.class_namespace', \App\Livewire::class);
+
+    }
+
+    /**
+     * boot
+     */
+    public function boot()
+    {
+        $this->registerLivewireFromPlugins();
+    }
+
+    /**
+     * registerComponents
+     */
+    public function registerComponents()
+    {
+        return [
+            \Rainlab\Livewire\Components\Livewire::class => 'livewire',
+        ];
     }
 
     /**
@@ -50,14 +74,32 @@ class Plugin extends PluginBase
      */
     public function registerMarkupTags()
     {
+        // Package missing
+        if (!class_exists(Livewire::class)) {
+            return;
+        }
+
         return [
             'functions' => [
-                'livewireStyles' => [Livewire::class, 'styles'],
+                'livewireStyles' => [LivewireHelper::class, 'renderStyles'],
                 'livewireScripts' => [LivewireHelper::class, 'renderScripts'],
             ],
             'tokens' => [
                 new LivewireTokenParser
             ]
         ];
+    }
+
+    /**
+     * registerLivewireFromPlugins
+     */
+    protected function registerLivewireFromPlugins()
+    {
+        $pluginDetails = PluginManager::instance()->getRegistrationMethodValues('registerLivewireComponents');
+        foreach ($pluginDetails as $livewireComponents) {
+            foreach ($livewireComponents as $className => $classAlias) {
+                LivewireHelper::registerComponent($className, $classAlias);
+            }
+        }
     }
 }

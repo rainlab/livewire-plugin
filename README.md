@@ -1,11 +1,11 @@
 
 # Livewire Plugin
 
-Integrate Laravel Livewire components inside October CMS themes.
+Integrate Laravel Livewire components inside October CMS themes. You can use them in your app and plugins, with Twig, Blade or PHP template engines.
 
 ## Requirements
 
-- October CMS 3.0 or above
+- October CMS 3.3.9 or above
 
 ### Installation
 
@@ -17,36 +17,36 @@ composer require rainlab/livewire-plugin
 
 ## Rendering Livewire Components
 
-Use the `livewireStyles` and `livewireScripts` Twig functions to activate Livewire in your CMS theme layout. For example, your layout may look like this:
+Use the `livewire` CMS component to activate Livewire in your CMS theme page or layout. For example, your page may look like this.
 
 ```twig
-<html>
-    <head>
-        {{ livewireStyles() }}
-    </head>
-    <body>
-        {% page %}
+url = "/test"
+layout = "default"
 
-        {{ livewireScripts() }}
-    </body>
-</html>
+[livewire]
+==
+<div class="container">
+    {% livewire 'counter' %}
+</div>
 ```
 
-Next, include a Livewire component using the `{% livewire %}` Twig tag inside your page or partials.
+Next, render a Livewire component using the `{% livewire %}` Twig tag.
 
 ```twig
 {% livewire 'counter' %}
 ```
 
-Pass variables to the component using an equal sign (`=`).
+You may pass variables to the component using an equal sign (`=`).
 
 ```twig
 {% livewire 'counter' count=3 %}
 ```
 
+> **Note**: For proper operation, your CMS layout should always include the `{% styles %}` and `{% scripts %}` placeholder tags, as described in the [placeholder documentation](https://docs.octobercms.com/3.x/markup/tag/placeholder.html#scripts).
+
 ## File Locations
 
-Classes are stored in the **app/Livewire** directory.
+By default, classes are stored in the **app/Livewire** directory. However, you can register custom classes within plugins (see below).
 
 Views are stored in the in **app/views/livewire** directory by default. The following template syntaxes are supported in the views directory, determined by their file extension.
 
@@ -56,9 +56,91 @@ Extension | Template Engine
 **.blade.php** | Laravel Blade
 **.php** | PHP Template
 
+## Plugin Registration
+
+To register Livewire components in your plugins using the `registerLivewireComponents` override method. The method should return a class name as the key and the component alias as the value.
+
+```php
+public function registerLivewireComponents()
+{
+    return [
+        \October\Demo\Livewire\Todo::class => 'demoTodo'
+    ];
+}
+```
+
+In the above example, the `October\Demo\Livewire\Todo` class refers to the following file locations:
+
+- Class file: **plugins/october/demo/livewire/Todo.php**
+- View file: **plugins/october/demo/views/livewire/todo.htm**.
+
+The class should return its view path by overriding the `render` method, and returns [a View instance](https://docs.octobercms.com/3.x/extend/services/response-view.html) relative to the plugin.
+
+```php
+namespace October\Demo\Livewire;
+
+class Todo extends \Livewire\Component
+{
+    public function render()
+    {
+        return \View::make('october.demo::livewire.todo');
+    }
+}
+```
+
+In the above example, the component can be rendered using the alias `demoTodo`.
+
+```twig
+{% livewire 'demoTodo' %}
+```
+
+### Usage in CMS Components
+
+You may implement Livewire in your [CMS components](https://docs.octobercms.com/3.x/extend/cms-components.html) using the `RainLab\Livewire\Behaviors\LivewireComponent` behavior. This implementation will ensure that the necessary dependencies are registered when the component is used.
+
+```php
+class MyComponent extends \Cms\Classes\ComponentBase
+{
+    public $implement = [
+        \RainLab\Livewire\Behaviors\LivewireComponent::class
+    ];
+}
+```
+
+Then render the component using the `{% livewire %}` tag.
+
+```twig
+{% livewire 'counter' %}
+```
+
+Alternatively, you can render the component in PHP using the `renderLivewire` method.
+
+```php
+$this->renderLivewire('counter');
+```
+
+### Usage in Backend Controllers
+
+You may implement Livewire in your [backend controllers](https://docs.octobercms.com/3.x/extend/system/controllers.html) using the `RainLab\Livewire\Behaviors\LivewireController` behavior. This implementation will ensure that the necessary dependencies are registered with the controller.
+
+```php
+class MyComponent extends \Backend\Classes\Controller
+{
+    public $implement = [
+        \RainLab\Livewire\Behaviors\LivewireController::class
+    ];
+}
+```
+
+Then render the component using the `makeLivewire` method.
+
+```php
+<?= $this->makeLivewire('counter') ?>
+```
+
 ## Usage Example
 
-Create a file called **app/views/livewire/counter.htm** with the following content.
+Here we will create a component in the **app** directory and render it on a CMS page freestanding. First, create a file called **app/views/livewire/counter.htm** with the following content.
 
 ```twig
 <div class="input-group py-3 w-25">
@@ -108,10 +190,9 @@ For example, in the demo theme, create a template called **test.htm** with the f
 ```twig
 url = "/test"
 layout = "default"
-==
-{% put scripts %}{{ livewireScripts() }}{% endput %}
-{% put styles %}{{ livewireStyles() }}{% endput %}
 
+[livewire]
+==
 <div class="container">
     {% livewire 'counter' %}
 </div>

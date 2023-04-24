@@ -12,6 +12,22 @@ use Livewire\Livewire;
 class LivewireHelper
 {
     /**
+     * registerComponent
+     */
+    public static function registerComponent($className, $classAlias)
+    {
+        Livewire::component($classAlias, $className);
+    }
+
+    /**
+     * renderStyles
+     */
+    public static function renderStyles($options = [])
+    {
+        return Livewire::styles($options);
+    }
+
+    /**
      * renderScripts adds turbo router support, along with the baseline scripts
      */
     public static function renderScripts($options = [])
