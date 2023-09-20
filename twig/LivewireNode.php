@@ -40,7 +40,7 @@ class LivewireNode extends TwigNode
         }
 
         $compiler
-            ->write("echo \Livewire\Livewire::mount(")
+            ->write("echo \RainLab\Livewire\Helpers\LivewireHelper::renderLivewire(")
             ->subcompile($this->getNode('nodes')->getNode(0))
         ;
 
@@ -52,7 +52,7 @@ class LivewireNode extends TwigNode
         }
 
         $compiler
-            ->write(")->html();\n")
+            ->write(");\n")
         ;
     }
 }

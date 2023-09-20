@@ -4,6 +4,7 @@ use Block;
 use Livewire\Livewire;
 use Cms\Classes\ComponentBehavior;
 use RainLab\Livewire\Helpers\LivewireHelper;
+use Config;
 
 /**
  * LivewireComponent
@@ -15,6 +16,14 @@ class LivewireComponent extends ComponentBehavior
      */
     public function beforeDisplay()
     {
+        if ($this->component->property('injectAssets') !== null) {
+            Config::set('livewire.inject_assets', $this->component->property('injectAssets'));
+        }
+        
+        if (!Config::get('livewire.inject_assets', true)) {
+            return;
+        }
+
         if ($this->controller->vars['livewireInjected'] ?? false) {
             return;
         }
@@ -30,6 +39,6 @@ class LivewireComponent extends ComponentBehavior
      */
     public function renderLivewire($component, $params = [])
     {
-        return Livewire::mount($component, $params)->html();
+        return LivewireHelper::renderLivewire($component, $params);
     }
 }

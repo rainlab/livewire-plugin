@@ -2,6 +2,7 @@
 
 use Url;
 use Livewire\Livewire;
+use Livewire\Mechanisms\FrontendAssets\FrontendAssets;
 
 /**
  * LivewireHelper
@@ -24,7 +25,12 @@ class LivewireHelper
      */
     public static function renderStyles($options = [])
     {
-        return Livewire::styles($options);
+        if (method_exists('\Livewire\LivewireManager', 'styles')) {
+            // Livewire v2
+            return Livewire::styles($options);
+        }
+        // Livewire v3
+        return FrontendAssets::styles($options);
     }
 
     /**
@@ -32,13 +38,19 @@ class LivewireHelper
      */
     public static function renderScripts($options = [])
     {
-        $turboScript = Url::asset('plugins/rainlab/livewire/assets/js/livewire-turbo.js');
+        if (method_exists('\Livewire\LivewireManager', 'scripts')) {
+            // Livewire v2
+            if (!isset($options['asset_url'])) {
+                $options['asset_url'] = Url::asset('');
+            }
 
-        if (!isset($options['asset_url'])) {
-            $options['asset_url'] = Url::asset('');
+            $scriptStr = Livewire::scripts($options);
+        } else {
+            // Livewire v3
+            $scriptStr = FrontendAssets::scripts($options);
         }
 
-        $scriptStr = Livewire::scripts($options);
+        $turboScript = Url::asset('plugins/rainlab/livewire/assets/js/livewire-turbo.js');
 
         $scriptStr = str_replace('data-turbolinks-eval="false"', '', $scriptStr);
 
@@ -47,5 +59,26 @@ class LivewireHelper
         $scriptStr .= '<script src="' . $turboScript . '" data-turbo-eval="false"></script>';
 
         return $scriptStr;
+    }
+
+    /**
+     * scriptConfig
+     */
+    public static function scriptConfig($options = [])
+    {
+        return FrontendAssets::scriptConfig($options);
+    }
+
+    /**
+     * renderLivewire
+     */
+    public static function renderLivewire($component, $params = [])
+    {
+        if (class_exists('\Livewire\LifecycleManager')) {
+            // Livewire v2
+            return Livewire::mount($component, $params)->html();
+        }
+        // Livewire v3
+        return Livewire::mount($component, $params);
     }
 }
