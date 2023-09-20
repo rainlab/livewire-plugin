@@ -79,7 +79,9 @@ The class should return its view path by overriding the `render` method, and ret
 ```php
 namespace October\Demo\Livewire;
 
-class Todo extends \Livewire\Component
+use RainLab\Livewire\Classes\LivewireBase;
+
+class Todo extends LivewireBase
 {
     public function render()
     {
@@ -161,9 +163,9 @@ Create a file called **app/Livewire/Counter.php** with the following contents.
 ```php
 <?php namespace App\Livewire;
 
-use Livewire\Component;
+use RainLab\Livewire\Classes\LivewireBase;
 
-class Counter extends Component
+class Counter extends LivewireBase
 {
     public $count = 1;
 

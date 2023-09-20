@@ -2,7 +2,6 @@
 
 use Block;
 use Config;
-use Livewire\Livewire;
 use Backend\Classes\ControllerBehavior;
 use RainLab\Livewire\Helpers\LivewireHelper;
 
