@@ -32,6 +32,11 @@ class Livewire extends ComponentBase
      */
     public function defineProperties()
     {
-        return [];
+        return [
+            'injectAssets' => [
+                'title' => 'Inject Livewire Assets',
+                'type' => 'checkbox',
+            ],
+        ];
     }
 }

@@ -95,6 +95,7 @@ class Plugin extends PluginBase
             'functions' => [
                 'livewireStyles' => [LivewireHelper::class, 'renderStyles'],
                 'livewireScripts' => [LivewireHelper::class, 'renderScripts'],
+                'livewireScriptConfig' => [LivewireHelper::class, 'scriptConfig'],
             ],
             'tokens' => [
                 new LivewireTokenParser

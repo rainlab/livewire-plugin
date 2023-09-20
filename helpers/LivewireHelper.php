@@ -62,6 +62,14 @@ class LivewireHelper
     }
 
     /**
+     * scriptConfig
+     */
+    public static function scriptConfig($options = [])
+    {
+        return FrontendAssets::scriptConfig($options);
+    }
+
+    /**
      * renderLivewire
      */
     public static function renderLivewire($component, $params = [])
