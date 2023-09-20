@@ -25,11 +25,10 @@ class LivewireHelper
      */
     public static function renderStyles($options = [])
     {
-        if (method_exists('\Livewire\LivewireManager', 'styles')) {
-            // Livewire v2
+        if (static::isVersion2()) {
             return Livewire::styles($options);
         }
-        // Livewire v3
+
         return FrontendAssets::styles($options);
     }
 
@@ -38,15 +37,14 @@ class LivewireHelper
      */
     public static function renderScripts($options = [])
     {
-        if (method_exists('\Livewire\LivewireManager', 'scripts')) {
-            // Livewire v2
+        if (static::isVersion2()) {
             if (!isset($options['asset_url'])) {
                 $options['asset_url'] = Url::asset('');
             }
 
             $scriptStr = Livewire::scripts($options);
-        } else {
-            // Livewire v3
+        }
+        else {
             $scriptStr = FrontendAssets::scripts($options);
         }
 
@@ -62,23 +60,40 @@ class LivewireHelper
     }
 
     /**
-     * scriptConfig
+     * renderScriptConfig renders the script configuration
      */
-    public static function scriptConfig($options = [])
+    public static function renderScriptConfig($options = [])
     {
-        return FrontendAssets::scriptConfig($options);
+        if (static::isVersion3()) {
+            return FrontendAssets::scriptConfig($options);
+        }
     }
 
     /**
-     * renderLivewire
+     * renderLivewire component after mounting it
      */
     public static function renderLivewire($component, $params = [])
     {
-        if (class_exists('\Livewire\LifecycleManager')) {
-            // Livewire v2
+        if (static::isVersion2()) {
             return Livewire::mount($component, $params)->html();
         }
-        // Livewire v3
+
         return Livewire::mount($component, $params);
+    }
+
+    /**
+     * isVersion2 returns true if Livewire v2 was found
+     */
+    public static function isVersion2()
+    {
+        return class_exists(\Livewire\LifecycleManager::class);
+    }
+
+    /**
+     * isVersion2 returns true if Livewire v3 was found
+     */
+    public static function isVersion3()
+    {
+        return !class_exists(\Livewire\LifecycleManager::class);
     }
 }

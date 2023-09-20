@@ -1,10 +1,9 @@
 <?php namespace RainLab\Livewire\Behaviors;
 
 use Block;
-use Livewire\Livewire;
+use Config;
 use Cms\Classes\ComponentBehavior;
 use RainLab\Livewire\Helpers\LivewireHelper;
-use Config;
 
 /**
  * LivewireComponent
@@ -19,7 +18,7 @@ class LivewireComponent extends ComponentBehavior
         if ($this->component->property('injectAssets') !== null) {
             Config::set('livewire.inject_assets', $this->component->property('injectAssets'));
         }
-        
+
         if (!Config::get('livewire.inject_assets', true)) {
             return;
         }

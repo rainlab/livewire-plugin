@@ -1,14 +1,14 @@
 <?php namespace RainLab\Livewire;
 
+use Url;
 use View;
+use Route;
 use Config;
 use System\Classes\PluginManager;
 use RainLab\Livewire\Helpers\LivewireHelper;
 use RainLab\Livewire\Twig\LivewireTokenParser;
 use System\Classes\PluginBase;
 use Livewire\Livewire;
-use Route;
-use Url;
 
 /**
  * Plugin for Livewire integration
@@ -50,12 +50,6 @@ class Plugin extends PluginBase
         Config::set('livewire.manifest_path', cache_path('framework/livewire-components.php'));
 
         Config::set('livewire.class_namespace', \App\Livewire::class);
-
-        if (method_exists('\Livewire\LivewireManager', 'setScriptRoute')) {
-            Livewire::setScriptRoute(function ($handle) {
-                return Route::get(Url::asset('/livewire/livewire.js'), $handle);
-            });
-        }
     }
 
     /**
@@ -66,6 +60,13 @@ class Plugin extends PluginBase
         // Package missing
         if (!class_exists(Livewire::class)) {
             return;
+        }
+
+        // Register route for main script
+        if (LivewireHelper::isVersion3()) {
+            Livewire::setScriptRoute(function ($handle) {
+                return Route::get(Url::asset('/livewire/livewire.js'), $handle);
+            });
         }
 
         $this->registerLivewireFromPlugins();
@@ -95,7 +96,7 @@ class Plugin extends PluginBase
             'functions' => [
                 'livewireStyles' => [LivewireHelper::class, 'renderStyles'],
                 'livewireScripts' => [LivewireHelper::class, 'renderScripts'],
-                'livewireScriptConfig' => [LivewireHelper::class, 'scriptConfig'],
+                'livewireScriptConfig' => [LivewireHelper::class, 'renderScriptConfig'],
             ],
             'tokens' => [
                 new LivewireTokenParser

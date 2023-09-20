@@ -1,6 +1,7 @@
 <?php namespace RainLab\Livewire\Behaviors;
 
 use Block;
+use Config;
 use Livewire\Livewire;
 use Backend\Classes\ControllerBehavior;
 use RainLab\Livewire\Helpers\LivewireHelper;
@@ -15,10 +16,10 @@ class LivewireController extends ControllerBehavior
      */
     public function beforeDisplay()
     {
-        if (!config('livewire.inject_assets', true)) {
+        if (!Config::get('livewire.inject_assets', true)) {
             return;
         }
-        
+
         if ($this->controller->vars['livewireInjected'] ?? false) {
             return;
         }
