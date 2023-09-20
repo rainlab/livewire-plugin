@@ -7,6 +7,8 @@ use RainLab\Livewire\Helpers\LivewireHelper;
 use RainLab\Livewire\Twig\LivewireTokenParser;
 use System\Classes\PluginBase;
 use Livewire\Livewire;
+use Route;
+use Url;
 
 /**
  * Plugin for Livewire integration
@@ -49,6 +51,11 @@ class Plugin extends PluginBase
 
         Config::set('livewire.class_namespace', \App\Livewire::class);
 
+        if (method_exists('\Livewire\LivewireManager', 'setScriptRoute')) {
+            Livewire::setScriptRoute(function ($handle) {
+                return Route::get(Url::asset('/livewire/livewire.js'), $handle);
+            });
+        }
     }
 
     /**

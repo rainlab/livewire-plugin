@@ -15,6 +15,10 @@ class LivewireController extends ControllerBehavior
      */
     public function beforeDisplay()
     {
+        if (!config('livewire.inject_assets', true)) {
+            return;
+        }
+        
         if ($this->controller->vars['livewireInjected'] ?? false) {
             return;
         }
@@ -30,6 +34,6 @@ class LivewireController extends ControllerBehavior
      */
     public function makeLivewire($component, $params = [])
     {
-        return Livewire::mount($component, $params)->html();
+        return LivewireHelper::renderLivewire($component, $params);
     }
 }
