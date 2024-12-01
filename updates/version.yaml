@@ -3,3 +3,4 @@ v1.0.2: Fixes broken script reference when using a subfolder
 v1.0.3: Fixes view path for make commands
 v1.1.0: Adds support for plugin registration
 v1.2.0: Adds support for Livewire version 3
+v1.2.1: Fixes script registration in Livewire 3

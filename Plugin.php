@@ -66,8 +66,8 @@ class Plugin extends PluginBase
         if (LivewireHelper::isVersion3()) {
             Livewire::setScriptRoute(function ($handle) {
                 return config('app.debug')
-                ? Route::get(Url::asset('/livewire/livewire.js'), $handle)
-                : Route::get(Url::asset('/livewire/livewire.min.js'), $handle);
+                    ? Route::get(Url::asset('/livewire/livewire.js'), $handle)
+                    : Route::get(Url::asset('/livewire/livewire.min.js'), $handle);
             });
         }
 
