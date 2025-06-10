@@ -20,58 +20,51 @@ use Twig\Error\SyntaxError as TwigErrorSyntax;
 class LivewireTokenParser extends TwigTokenParser
 {
     /**
-     * parse a token and returns a node.
-     * @return TwigNode A TwigNode instance
+     * Parses a token and returns a node.
      */
     public function parse(TwigToken $token)
     {
         $lineno = $token->getLine();
         $stream = $this->parser->getStream();
 
-        $name = $this->parser->getExpressionParser()->parseExpression();
+        $nodes = [];
         $paramNames = [];
-        $nodes = [$name];
         $hasOnly = false;
 
-        $end = false;
-        while (!$end) {
+        // First expression is the Livewire component name
+        $nodes['name'] = $this->parser->getExpressionParser()->parseExpression();
+
+        // Parse parameters and flags
+        while (!$stream->test(TwigToken::BLOCK_END_TYPE)) {
             $current = $stream->next();
 
-            if (
-                $current->test(TwigToken::NAME_TYPE, 'only') &&
-                !$stream->test(TwigToken::OPERATOR_TYPE, '=')
-            ) {
+            if ($current->test(TwigToken::NAME_TYPE, 'only') && !$stream->test(TwigToken::OPERATOR_TYPE, '=')) {
                 $hasOnly = true;
-                $current = $stream->next();
+                continue;
             }
 
-            switch ($current->getType()) {
-                case TwigToken::NAME_TYPE:
-                    $paramNames[] = $current->getValue();
-                    $stream->expect(TwigToken::OPERATOR_TYPE, '=');
-                    $nodes[] = $this->parser->getExpressionParser()->parseExpression();
-                    break;
-
-                case TwigToken::BLOCK_END_TYPE:
-                    $end = true;
-                    break;
-
-                default:
-                    throw new TwigErrorSyntax(
-                        sprintf('Invalid syntax in the livewire tag. Line %s', $lineno),
-                        $stream->getCurrent()->getLine(),
-                        $stream->getSourceContext()
-                    );
-                    break;
+            if ($current->getType() === TwigToken::NAME_TYPE) {
+                $paramName = $current->getValue();
+                $stream->expect(TwigToken::OPERATOR_TYPE, '=');
+                $nodes[$paramName] = $this->parser->getExpressionParser()->parseExpression();
+                $paramNames[] = $paramName;
+            } else {
+                throw new TwigErrorSyntax(
+                    sprintf('Invalid syntax in the livewire tag. Line %s', $lineno),
+                    $stream->getCurrent()->getLine(),
+                    $stream->getSourceContext()
+                );
             }
         }
 
+        $stream->expect(TwigToken::BLOCK_END_TYPE);
+
         $options = [
             'paramNames' => $paramNames,
-            'hasOnly' => $hasOnly
+            'hasOnly' => $hasOnly,
         ];
 
-        return new LivewireNode(new TwigNode($nodes), $options, $token->getLine(), $this->getTag());
+        return new LivewireNode($nodes, $options, $lineno, $this->getTag());
     }
 
     /**

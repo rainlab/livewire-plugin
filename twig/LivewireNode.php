@@ -9,50 +9,48 @@ use Twig\Compiler as TwigCompiler;
  * @package rainlab\livewire
  * @author Alexey Bobkov, Samuel Georges
  */
+#[\Twig\Attribute\YieldReady]
 class LivewireNode extends TwigNode
 {
     /**
      * __construct
      */
-    public function __construct(TwigNode $nodes, $options, $lineno, $tag = 'livewire')
+    public function __construct(array $nodes, array $options, int $lineno, string $tag = 'livewire')
     {
-        $nodes = ['nodes' => $nodes];
-
         parent::__construct($nodes, ['options' => $options], $lineno, $tag);
     }
 
     /**
-     * compile the node to PHP.
+     * Compiles the node to PHP.
      */
     public function compile(TwigCompiler $compiler)
     {
-        $options = $this->getAttribute('options');
+        $paramNames = $this->getAttribute('options')['paramNames'];
+        $hasOnly = $this->getAttribute('options')['hasOnly'];
 
         $compiler->addDebugInfo($this);
 
         $compiler->write("\$livewireParams = [];\n");
 
-        for ($i = 1; $i < count($this->getNode('nodes')); $i++) {
-            $attrName = $options['paramNames'][$i-1];
-            $compiler->write("\$livewireParams['".$attrName."'] = ");
-            $compiler->subcompile($this->getNode('nodes')->getNode($i));
-            $compiler->write(";\n");
+        foreach ($paramNames as $paramName) {
+            if ($this->hasNode($paramName)) {
+                $compiler
+                    ->write("\$livewireParams['$paramName'] = ")
+                    ->subcompile($this->getNode($paramName))
+                    ->write(";\n");
+            }
         }
 
         $compiler
-            ->write("echo \RainLab\Livewire\Helpers\LivewireHelper::renderLivewire(")
-            ->subcompile($this->getNode('nodes')->getNode(0))
-        ;
+            ->write("yield \\RainLab\\Livewire\\Helpers\\LivewireHelper::renderLivewire(")
+            ->subcompile($this->getNode('name'));
 
-        if ($options['hasOnly']) {
+        if ($hasOnly) {
             $compiler->write(", array_merge(['__cms_livewire_params' => \$livewireParams], \$livewireParams)");
-        }
-        else {
+        } else {
             $compiler->write(", array_merge(\$context, ['__cms_livewire_params' => \$livewireParams], \$livewireParams)");
         }
 
-        $compiler
-            ->write(");\n")
-        ;
+        $compiler->write(");\n");
     }
 }
