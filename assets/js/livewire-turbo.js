@@ -18,13 +18,18 @@ function wireTurboAfterFirstVisit() {
 
 function wireTurboBeforeCache() {
     document.querySelectorAll('[wire\\:id]').forEach(function(el) {
-        const component = el.__livewire;
-        const dataObject = {
-            fingerprint: component.fingerprint,
-            serverMemo: component.serverMemo,
-            effects: component.effects,
-        };
-        el.setAttribute('wire:initial-data', JSON.stringify(dataObject));
+        var component = el.__livewire;
+        if (!component) return;
+
+        // Livewire v2
+        if (component.fingerprint) {
+            var dataObject = {
+                fingerprint: component.fingerprint,
+                serverMemo: component.serverMemo,
+                effects: component.effects,
+            };
+            el.setAttribute('wire:initial-data', JSON.stringify(dataObject));
+        }
     });
 
     window.Alpine && window.Alpine.deferMutations && window.Alpine.deferMutations();
@@ -33,14 +38,22 @@ function wireTurboBeforeCache() {
 document.addEventListener('page:load', wireTurboAfterFirstVisit);
 document.addEventListener('page:before-cache', wireTurboBeforeCache);
 
-Livewire.hook('beforePushState', (state) => {
-    if (!state.turbolinks) {
-        state.turbolinks = {};
-    }
-});
+// Livewire v2 hooks
+if (typeof Livewire.hook === 'function') {
+    try {
+        Livewire.hook('beforePushState', function(state) {
+            if (!state.turbolinks) {
+                state.turbolinks = {};
+            }
+        });
 
-Livewire.hook('beforeReplaceState', (state) => {
-    if (!state.turbolinks) {
-        state.turbolinks = {};
+        Livewire.hook('beforeReplaceState', function(state) {
+            if (!state.turbolinks) {
+                state.turbolinks = {};
+            }
+        });
     }
-});
+    catch (e) {
+        // Hooks not available in this version
+    }
+}

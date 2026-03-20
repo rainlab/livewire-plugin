@@ -5,3 +5,4 @@ v1.1.0: Adds support for plugin registration
 v1.2.0: Adds support for Livewire version 3
 v1.2.1: Fixes script registration in Livewire 3
 v1.2.2: Fixes Twig 3 support
+v1.3.0: Adds support for Livewire version 4

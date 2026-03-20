@@ -64,7 +64,7 @@ class LivewireHelper
      */
     public static function renderScriptConfig($options = [])
     {
-        if (static::isVersion3()) {
+        if (static::isVersion3() || static::isVersion4()) {
             return FrontendAssets::scriptConfig($options);
         }
     }
@@ -90,10 +90,19 @@ class LivewireHelper
     }
 
     /**
-     * isVersion2 returns true if Livewire v3 was found
+     * isVersion3 returns true if Livewire v3 was found
      */
     public static function isVersion3()
     {
-        return !class_exists(\Livewire\LifecycleManager::class);
+        return !class_exists(\Livewire\LifecycleManager::class)
+            && !static::isVersion4();
+    }
+
+    /**
+     * isVersion4 returns true if Livewire v4 was found
+     */
+    public static function isVersion4()
+    {
+        return property_exists(\Livewire\LivewireManager::class, 'v4');
     }
 }
