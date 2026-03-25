@@ -74,6 +74,12 @@ class LivewireHelper
      */
     public static function renderLivewire($component, $params = [])
     {
+        // When called from the Twig tag, only use explicitly declared params
+        // to avoid passing the full Twig context (which contains circular refs)
+        if (isset($params['__cms_livewire_params'])) {
+            $params = $params['__cms_livewire_params'];
+        }
+
         if (static::isVersion2()) {
             return Livewire::mount($component, $params)->html();
         }
