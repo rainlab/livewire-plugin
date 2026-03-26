@@ -63,7 +63,10 @@ class Plugin extends PluginBase
         }
 
         // Register route for main script
-        if (LivewireHelper::isVersion3() || LivewireHelper::isVersion4()) {
+        if (LivewireHelper::isVersion4()) {
+            $this->setScriptRouteV4();
+        }
+        elseif (LivewireHelper::isVersion3()) {
             Livewire::setScriptRoute(function ($handle) {
                 return config('app.debug')
                     ? Route::get(Url::asset('/livewire/livewire.js'), $handle)
@@ -104,6 +107,21 @@ class Plugin extends PluginBase
                 new LivewireTokenParser
             ]
         ];
+    }
+
+    /**
+     * setScriptRouteV4 registers the script route using the Livewire 4
+     * EndpointResolver prefix
+     */
+    protected function setScriptRouteV4()
+    {
+        $resolver = \Livewire\Mechanisms\HandleRequests\EndpointResolver::class;
+
+        Livewire::setScriptRoute(function ($handle) use ($resolver) {
+            return config('app.debug')
+                ? Route::get($resolver::scriptPath(minified: false), $handle)
+                : Route::get($resolver::scriptPath(minified: true), $handle);
+        });
     }
 
     /**
